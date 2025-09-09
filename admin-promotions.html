@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Управление акциями - LaggarTT</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-4">
+        <h1>Управление акциями</h1>
+        
+        <div class="card mt-4">
+            <div class="card-header">Добавить новую акцию</div>
+            <div class="card-body">
+                <form id="promo-form">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Название акции</label>
+                                <input type="text" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Тип акции</label>
+                                <select class="form-select" required>
+                                    <option value="">Выберите тип</option>
+                                    <option value="скидка_на_категорию">Скидка на категорию</option>
+                                    <option value="скидка_на_бренд">Скидка на бренд</option>
+                                    <option value="бесплатная_доставка">Бесплатная доставка</option>
+                                    <option value="подарок">Подарок</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Дата начала</label>
+                                <input type="date" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Дата окончания</label>
+                                <input type="date" class="form-control" required>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-success">Добавить акцию</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

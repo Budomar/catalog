@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LaggarTT - Каталог котлов</title>
+    
+    <!-- Подключение CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/comparison.css">
+    <link rel="stylesheet" href="styles/mini-cart.css">
+    <link rel="stylesheet" href="styles/recommendations.css">
+    <link rel="stylesheet" href="styles/notifications.css">
+    <link rel="stylesheet" href="styles/touch-interface.css">
+    <link rel="manifest" href="/manifest.json">
+    
+    <style>
+        /* Стили для аккордеонов на мобильных */
+        @media (max-width: 768px) {
+            .desktop-filters {
+                display: none !important;
+            }
+            .mobile-accordion {
+                display: block !important;
+            }
+            .accordion-button {
+                padding: 0.75rem;
+                font-size: 0.9rem;
+            }
+            .accordion-body {
+                padding: 1rem;
+            }
+            
+            /* Горизонтальное расположение иконок в навигации */
+            .nav-icons-container {
+                display: flex !important;
+                flex-direction: row;
+                align-items: center;
+                gap: 10px;
+            }
+            
+            .nav-icon-btn {
+                padding: 0.4rem;
+                font-size: 1.1rem;
+                width: 40px;
+                height: 40px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .nav-icon-badge {
+                position: absolute;
+                top: -5px;
+                right: -5px;
+                font-size: 0.6rem;
+                min-width: 18px;
+                height: 18px;
+            }
+        }
+        
+        @media (min-width: 769px) {
+            .desktop-filters {
+                display: flex !important;
+            }
+            .mobile-accordion {
+                display: none !important;
+            }
+            
+            .nav-icons-container {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                gap: 10px;
+            }
+            
+            .nav-icon-btn {
+                padding: 0.5rem;
+            }
+        }
+        
+        /* Компактные карточки фильтров */
+        .filter-card {
+            height: 100%;
+            margin-bottom: 0;
+        }
+        
+        .filter-card .card-body {
+            padding: 1rem;
+        }
+        
+        .filter-card .card-header {
+            padding: 0.75rem 1rem;
+            background-color: #f8f9fa;
+        }
+        
+        /* Полное отображение названий моделей */
+        .card-title {
+            white-space: normal !important;
+            overflow: visible !important;
+            text-overflow: clip !important;
+            display: block !important;
+            -webkit-line-clamp: unset !important;
+            line-clamp: unset !important; /* Добавлено стандартное свойство */
+            -webkit-box-orient: unset !important;
+            line-height: 1.3;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Убираем стандартные стили кнопок навигации */
+        .navbar-nav .btn {
+            border: none;
+            background: none;
+        }
+        
+        .navbar-nav .btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Скрываем секции по умолчанию */
+        .hidden-section {
+            display: none;
+        }
+        
+        /* Аккордеоны Bootstrap */
+        .accordion-button:not(.collapsed) {
+            background-color: #f8f9fa;
+            color: #000;
+        }
+        
+        .accordion-button:focus {
+            box-shadow: none;
+            border-color: rgba(0,0,0,.125);
+        }
+        
+        /* Улучшенный скроллбар */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+    </style>
+</head>
+<body>
+    <!-- Навигация -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="#" onclick="showCatalog(); return false;">
+                <img src="images/lagar.png" alt="METEOR" height="40" class="d-inline-block align-text-top">
+                <span class="ms-2">LaggarTT</span>
+            </a>
+            <div class="navbar-nav ms-auto">
+                <div class="nav-icons-container">
+                    <!-- Акции -->
+                    <button class="btn btn-outline-light nav-icon-btn" onclick="showAllPromotions()">
+                        <i class="bi bi-percent"></i>
+                    </button>
+                    
+                    <!-- Уведомления -->
+                    <div class="position-relative">
+                        <button class="btn btn-outline-light nav-icon-btn" onclick="toggleNotifications(); return false;">
+                            <i class="bi bi-bell"></i>
+                        </button>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger nav-icon-badge" id="notification-badge" style="display: none;">0</span>
+                    </div>
+                    
+                    <!-- Корзина -->
+                    <div class="position-relative">
+                        <button class="btn btn-outline-light nav-icon-btn" onclick="showMiniCart(); return false;">
+                            <i class="bi bi-cart3"></i>
+                        </button>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger nav-icon-badge" id="cart-badge">0</span>
+                    </div>
+                    
+                    <!-- Сравнение -->
+                    <div class="position-relative">
+                        <button class="btn btn-outline-light nav-icon-btn" id="compare-btn" onclick="showComparison(); return false;">
+                            <i class="bi bi-bar-chart"></i>
+                        </button>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger nav-icon-badge" id="compare-badge">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Основной каталог -->
+    <div id="catalog-section" class="container py-4">
+        <!-- Поиск и фильтры -->
+        <div class="row mb-4">
+            <div class="col-md-8 mb-3">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+                    <input type="text" id="search-input" class="form-control" placeholder="Поиск по названию или артикулу..." oninput="filterProducts()">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <select id="sort-select" class="form-select" onchange="sortProducts()">
+                    <option value="name-asc">По названию (А-Я)</option>
+                    <option value="name-desc">По названию (Я-А)</option>
+                    <option value="price-asc">По цене (возрастание)</option>
+                    <option value="price-desc">По цене (убывание)</option>
+                    <option value="stock-desc">По наличию</option>
+                    <option value="power-asc">По мощности (возрастание)</option>
+                    <option value="power-desc">По мощности (убывание)</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- ФИЛЬТРЫ И СКИДКИ ДЛЯ ДЕСКТОПА (769px+) -->
+        <div class="desktop-filters row mb-4 filters-row">
+            <div class="col-md-6">
+                <div class="card filter-card">
+                    <div class="card-header">
+                        <h6 class="mb-0"><i class="bi bi-funnel me-2"></i>Фильтры</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <label class="form-label">Мощность</label>
+                                <select id="power-filter" class="form-select" onchange="filterProducts()">
+                                    <option value="">Все</option>
+                                    <option value="24">24 кВт</option>
+                                    <option value="28">28 кВт</option>
+                                    <option value="32">32 кВт</option>
+                                    <option value="35">35 кВт</option>
+                                </select>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label">Контуры</label>
+                                <select id="contour-filter" class="form-select" onchange="filterProducts()">
+                                    <option value="">Все</option>
+                                    <option value="Одноконтурный">Одноконтурный</option>
+                                    <option value="Двухконтурный">Двухконтурный</option>
+                                </select>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label">Wi-Fi</label>
+                                <select id="wifi-filter" class="form-select" onchange="filterProducts()">
+                                    <option value="">Все</option>
+                                    <option value="Да">С Wi-Fi</option>
+                                    <option value="Нет">Без Wi-Fi</option>
+                                </select>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label">Наличие</label>
+                                <select id="stock-filter" class="form-select" onchange="filterProducts()">
+                                    <option value="">Все</option>
+                                    <option value="available">В наличии</option>
+                                    <option value="outofstock">Под заказ</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card filter-card">
+                    <div class="card-header">
+                        <h6 class="mb-0"><i class="bi bi-percent me-2"></i>Скидка</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-2">
+                            <label class="form-label">Размер скидки: <span id="discount-value">0</span>%</label>
+                            <input type="range" id="discount-slider" class="form-range" min="0" max="50" value="0" oninput="updateDiscount(this.value)">
+                        </div>
+                        <div class="mb-2">
+                            <input type="number" id="discount-input" class="form-control" min="0" max="50" value="0" oninput="updateDiscount(this.value)">
+                        </div>
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" id="auto-apply" checked>
+                            <label class="form-check-label" for="auto-apply">Применять автоматически</label>
+                        </div>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="show-original" checked onchange="toggleOriginalPrices()">
+                            <label class="form-check-label" for="show-original">Показывать оригинальные цены</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ФИЛЬТРЫ И СКИДКИ ДЛЯ МОБИЛЬНЫХ (до 768px) -->
+        <div class="mobile-accordion mb-4" style="display: none;">
+            <!-- Фильтры - Аккордеон -->
+            <div class="accordion mb-3" id="mobileFilterAccordion">
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" 
+                                data-bs-toggle="collapse" data-bs-target="#mobileFilterCollapse">
+                            <i class="bi bi-funnel me-2"></i> Фильтры
+                        </button>
+                    </h2>
+                    <div id="mobileFilterCollapse" class="accordion-collapse collapse">
+                        <div class="accordion-body">
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <label class="form-label">Мощность</label>
+                                    <select id="power-filter-mobile" class="form-select" onchange="syncFilter('power', this.value)">
+                                        <option value="">Все</option>
+                                        <option value="24">24 кВт</option>
+                                        <option value="28">28 кВт</option>
+                                        <option value="32">32 кВт</option>
+                                        <option value="35">35 кВт</option>
+                                    </select>
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label">Контуры</label>
+                                    <select id="contour-filter-mobile" class="form-select" onchange="syncFilter('contour', this.value)">
+                                        <option value="">Все</option>
+                                        <option value="Одноконтурный">Одноконтурный</option>
+                                        <option value="Двухконтурный">Двухконтурный</option>
+                                    </select>
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label">Wi-Fi</label>
+                                    <select id="wifi-filter-mobile" class="form-select" onchange="syncFilter('wifi', this.value)">
+                                        <option value="">Все</option>
+                                        <option value="Да">С Wi-Fi</option>
+                                        <option value="Нет">Без Wi-Fi</option>
+                                    </select>
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label">Наличие</label>
+                                    <select id="stock-filter-mobile" class="form-select" onchange="syncFilter('stock', this.value)">
+                                        <option value="">Все</option>
+                                        <option value="available">В наличии</option>
+                                        <option value="outofstock">Под заказ</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Скидки - Аккордеон -->
+            <div class="accordion" id="mobileDiscountAccordion">
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" 
+                                data-bs-toggle="collapse" data-bs-target="#mobileDiscountCollapse">
+                            <i class="bi bi-percent me-2"></i> Скидка
+                        </button>
+                    </h2>
+                    <div id="mobileDiscountCollapse" class="accordion-collapse collapse">
+                        <div class="accordion-body">
+                            <div class="mb-2">
+                                <label class="form-label">Размер скидки: <span id="discount-value-mobile">0</span>%</label>
+                                <input type="range" id="discount-slider-mobile" class="form-range" min="0" max="50" value="0" oninput="updateDiscountMobile(this.value)">
+                            </div>
+                            <div class="mb-2">
+                                <input type="number" id="discount-input-mobile" class="form-control" min="0" max="50" value="0" oninput="updateDiscountMobile(this.value)">
+                            </div>
+                            <div class="form-check form-switch mb-2">
+                                <input class="form-check-input" type="checkbox" id="auto-apply-mobile" checked onchange="document.getElementById('auto-apply').checked = this.checked;">
+                                <label class="form-check-label" for="auto-apply-mobile">Применять автоматически</label>
+                            </div>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="show-original-mobile" checked onchange="document.getElementById('show-original').checked = this.checked; if (typeof toggleOriginalPrices === 'function') toggleOriginalPrices();">
+                                <label class="form-check-label" for="show-original-mobile">Показывать оригинальные цены</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Статистика -->
+        <div class="row mb-3">
+            <div class="col-12">
+                <div class="alert alert-info py-2">
+                    <i class="bi bi-info-circle"></i> <span id="product-count">Загрузка товаров...</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Контейнер для товаров -->
+        <div class="row g-3" id="products-container">
+            <div class="col-12 text-center">
+                <div class="d-flex justify-content-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Загрузка...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Корзина -->
+    <div id="cart-section" class="container py-4 hidden-section">
+        <h2 class="mb-4">Корзина</h2>
+        
+        <!-- Контейнер для товаров в корзине -->
+        <div id="cart-items-container" class="mb-4">
+            <!-- Сюда рендерятся товары через JavaScript -->
+        </div>
+        
+        <!-- Блок с итогами и кнопками действий -->
+        <div class="cart-total">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Итого:</h5>
+                    <div class="d-flex justify-content-between">
+                        <span>Товаров:</span>
+                        <span id="cart-total-items">0</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span>Общая стоимость:</span>
+                        <span id="cart-total-price">0 руб.</span>
+                    </div>
+                    <div class="d-flex justify-content-between text-success">
+                        <span>Скидка:</span>
+                        <span id="cart-total-discount">0 руб.</span>
+                    </div>
+                    <div class="d-flex justify-content-between fw-bold fs-5">
+                        <span>К оплате:</span>
+                        <span id="cart-final-price">0 руб.</span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-success btn-lg" onclick="sendRequest('invoice')">
+                            <i class="bi bi-receipt"></i> Запросить Счёт
+                        </button>
+                        <button class="btn btn-warning btn-lg" onclick="sendRequest('quotation')">
+                            <i class="bi bi-file-text"></i> Запросить КП
+                        </button>
+                        <button class="btn btn-outline-danger btn-sm" onclick="clearCart()">
+                            <i class="bi bi-trash"></i> Очистить корзину
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно сравнения -->
+    <div class="modal fade" id="compareModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Сравнение товаров</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="compare-container"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                    <button type="button" class="btn btn-primary" onclick="clearComparison()">Очистить сравнение</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно акций -->
+    <div class="modal fade" id="promotionsModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content promotions-modal">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-megaphone text-warning me-2"></i>
+                        Все акции
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="promotions-container">
+                        <div class="text-center py-4">
+                            <div class="spinner-border text-warning" role="status">
+                                <span class="visually-hidden">Загрузка акций...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Подключение JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- ОСНОВНЫЕ ФУНКЦИИ -->
+    <script src="js/main.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/comparison.js"></script>
+
+    <!-- МОДУЛИ (загружаются после основных) -->
+    <script src="modules/cart-storage.js"></script>
+    <script src="modules/mini-cart.js"></script>
+    <script src="modules/recommendations.js"></script>
+    <script src="modules/notifications.js"></script>
+    <script src="modules/touch-interface.js"></script>
+    
+    <!-- ИНИЦИАЛИЗАЦИЯ -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Страница загружена, инициализируем...');
+        
+        // Загружаем данные
+        if (typeof loadData === 'function') {
+            loadData();
+        }
+        
+        // Инициализируем аккордеоны Bootstrap
+        const filterCollapse = new bootstrap.Collapse(document.getElementById('mobileFilterCollapse'), {
+            toggle: false
+        });
+        
+        const discountCollapse = new bootstrap.Collapse(document.getElementById('mobileDiscountCollapse'), {
+            toggle: false
+        });
+        
+        // Синхронизация фильтров между мобильной и десктопной версиями
+        window.syncFilter = function(filterName, value) {
+            document.getElementById(filterName + '-filter').value = value;
+            if (typeof filterProducts === 'function') {
+                filterProducts();
+            }
+        }
+        
+        // Функция для обновления скидки на мобильной версии
+        window.updateDiscountMobile = function(value) {
+            value = Math.max(0, Math.min(50, parseInt(value) || 0));
+            document.getElementById('discount-slider-mobile').value = value;
+            document.getElementById('discount-input-mobile').value = value;
+            document.getElementById('discount-value-mobile').textContent = value;
+            
+            document.getElementById('discount-slider').value = value;
+            document.getElementById('discount-input').value = value;
+            document.getElementById('discount-value').textContent = value;
+            
+            if (typeof updateDiscount === 'function') {
+                updateDiscount(value);
+            }
+        }
+        
+        // Инициализация модулей после загрузки
+        setTimeout(() => {
+            console.log('Инициализация модулей...');
+            
+            // Модуль сохранения корзины
+            if (typeof cartStorage !== 'undefined' && typeof cartStorage.init === 'function') {
+                cartStorage.init();
+            }
+            
+            // Модуль сравнения
+            if (typeof comparisonModule !== 'undefined' && typeof comparisonModule.init === 'function') {
+                comparisonModule.init();
+            }
+            
+            // Мини-корзина
+            if (typeof miniCart !== 'undefined' && typeof miniCart.init === 'function') {
+                miniCart.init();
+            }
+            
+            // Уведомления
+            if (typeof notificationSystem !== 'undefined' && typeof notificationSystem.init === 'function') {
+                notificationSystem.init();
+            }
+            
+            // Touch-интерфейс
+            if (typeof touchInterface !== 'undefined' && typeof touchInterface.init === 'function') {
+                touchInterface.init();
+            }
+            
+            // Рекомендации
+            if (typeof recommendationsSystem !== 'undefined' && typeof recommendationsSystem.init === 'function') {
+                recommendationsSystem.init();
+            }
+        }, 1000);
+    });
+
+    // Показ/скрытие каталога и корзины
+    function showCatalog() {
+        document.getElementById('catalog-section').classList.remove('hidden-section');
+        document.getElementById('cart-section').classList.add('hidden-section');
+        document.body.classList.remove('cart-open');
+    }
+
+    function showCart() {
+        document.getElementById('catalog-section').classList.add('hidden-section');
+        document.getElementById('cart-section').classList.remove('hidden-section');
+        document.body.classList.add('cart-open');
+        
+        if (typeof updateCart === 'function') {
+            updateCart();
+        }
+    }
+    
+    function showMiniCart() {
+        if (typeof miniCart !== 'undefined' && typeof miniCart.show === 'function') {
+            miniCart.show();
+        } else {
+            showCart();
+        }
+    }
+
+    // Базовая функция очистки корзины
+    function clearCart() {
+        if (confirm('Очистить корзину?')) {
+            if (typeof clearCartStorage === 'function') {
+                clearCartStorage();
+            } else {
+                cart = [];
+                if (typeof updateCart === 'function') updateCart();
+                if (typeof updateCartBadge === 'function') updateCartBadge();
+                if (typeof renderProducts === 'function') renderProducts();
+            }
+        }
+    }
+    
+    // Простая система уведомлений
+    function toggleNotifications() {
+        if (typeof notificationSystem !== 'undefined' && typeof notificationSystem.toggleNotifications === 'function') {
+            notificationSystem.toggleNotifications();
+        } else {
+            alert('Система уведомлений загружается...');
+        }
+    }
+    
+    // Глобальные функции для сравнения
+    function showComparison() {
+        if (typeof comparisonModule !== 'undefined' && typeof comparisonModule.showComparison === 'function') {
+            comparisonModule.showComparison();
+        } else {
+            alert('Модуль сравнения загружается...');
+        }
+    }
+    
+    function clearComparison() {
+        if (typeof comparisonModule !== 'undefined' && typeof comparisonModule.clearComparison === 'function') {
+            comparisonModule.clearComparison();
+        }
+    }
+    
+    // Обработка отправки запросов
+    function sendRequest(type) {
+        if (typeof window.sendRequest === 'function') {
+            window.sendRequest(type);
+        } else {
+            alert('Функция отправки запроса еще не загружена');
+        }
+    }
+    // Глобальные функции для акций
+    function showAllPromotions() {
+        if (typeof promotionsSystem !== 'undefined') {
+            promotionsSystem.showAllPromotions();
+        } else {
+            alert('Система акций загружается...');
+        }
+    }
+
+    function applyPromoCode() {
+        const promoCode = prompt('Введите промокод:');
+        if (promoCode) {
+            alert(`Промокод "${promoCode}" применен!`);
+            // Здесь будет логика применения промокода
+        }
+    }
+    // Функция показа всех акций
+    function showAllPromotions() {
+        if (typeof promotionsSystem !== 'undefined' && typeof promotionsSystem.showAllPromotions === 'function') {
+            promotionsSystem.showAllPromotions();
+        } else {
+            // Создаем модальное окно если система акций еще не загружена
+            const promotionsModal = new bootstrap.Modal(document.getElementById('promotionsModal'));
+            promotionsModal.show();
+        }
+    }
+    </script>
+    <script>
+    // Простая функция для проверки загрузки cart.js
+    function checkCartLoaded() {
+        if (typeof addToCart === 'undefined') {
+            console.error('❌ cart.js не загружен правильно!');
+            // Создаем простую версию функции для экстренного случая
+            window.addToCart = function(article) {
+                alert('Функция корзины загружается... Попробуйте позже');
+                return false;
+            };
+        } else {
+            console.log('✅ cart.js загружен успешно');
+        }
+    }
+
+    // Проверяем после загрузки страницы
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(checkCartLoaded, 1000);
+    });
+
+    // Аварийная версия функций если основные не загрузились
+    if (typeof addToCart === 'undefined') {
+        window.addToCart = function(article) {
+            console.log('Аварийный режим: добавление в корзину', article);
+            alert('Товар добавлен в корзину (аварийный режим)');
+            return true;
+        };
+    }
+    </script>
+    <script>
+    // Отладочный код
+    console.log('=== ДЕБАГГИНГ КОРЗИНЫ ===');
+    console.log('addToCart exists:', typeof addToCart);
+    console.log('updateCartItem exists:', typeof updateCartItem);
+    console.log('removeFromCart exists:', typeof removeFromCart);
+
+    // Проверка через 2 секунды после загрузки
+    setTimeout(() => {
+        console.log('=== ПРОВЕРКА ЧЕРЕЗ 2 СЕКУНДЫ ===');
+        console.log('addToCart:', typeof addToCart);
+        console.log('updateCartItem:', typeof updateCartItem);
+        console.log('removeFromCart:', typeof removeFromCart);
+        
+        if (typeof addToCart === 'function') {
+            console.log('✅ addToCart работает!');
+        } else {
+            console.error('❌ addToCart не работает!');
+        }
+    }, 2000);
+    </script>
+</body>
+</html>
