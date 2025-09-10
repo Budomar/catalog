@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LaggarTT - Каталог котлов</title>
+    <title>LaggarTT - Каталог котлов и оборудования</title>
     
     <!-- Подключение CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -17,6 +17,130 @@
     <link rel="manifest" href="/manifest.json">
     
     <style>
+        /* Стили для новой системы категорий */
+        .category-filter {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        
+        .category-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 80px;
+            height: 80px;
+            border: 2px solid #dee2e6;
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            padding: 10px;
+        }
+        
+        .category-btn:hover {
+            border-color: #0d6efd;
+            transform: translateY(-2px);
+        }
+        
+        .category-btn.active {
+            border-color: #0d6efd;
+            background-color: #e8f4ff;
+            box-shadow: 0 2px 8px rgba(13, 110, 253, 0.2);
+        }
+        
+        .category-icon {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        
+        .category-name {
+            font-size: 12px;
+            font-weight: 500;
+            line-height: 1.2;
+        }
+        
+        .discount-section {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .price-display-toggle {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 1000;
+            background: white;
+            padding: 10px 15px;
+            border-radius: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .price-with-vat {
+            font-weight: bold;
+            color: #198754;
+        }
+        
+        .price-without-vat {
+            font-size: 0.8em;
+            color: #6c757d;
+            text-decoration: line-through;
+        }
+        
+        .product-card {
+            transition: transform 0.2s ease;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .product-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 1;
+        }
+        
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .category-filter {
+                justify-content: center;
+                padding: 10px;
+            }
+            
+            .category-btn {
+                width: 70px;
+                height: 70px;
+            }
+            
+            .category-icon {
+                font-size: 20px;
+            }
+            
+            .category-name {
+                font-size: 11px;
+            }
+            
+            .price-display-toggle {
+                bottom: 10px;
+                left: 10px;
+                right: 10px;
+                justify-content: center;
+            }
+        }
+        
         /* Стили для аккордеонов на мобильных */
         @media (max-width: 768px) {
             .desktop-filters {
@@ -33,7 +157,6 @@
                 padding: 1rem;
             }
             
-            /* Горизонтальное расположение иконок в навигации */
             .nav-icons-container {
                 display: flex !important;
                 flex-direction: row;
@@ -80,78 +203,10 @@
                 padding: 0.5rem;
             }
         }
-        
-        /* Компактные карточки фильтров */
-        .filter-card {
-            height: 100%;
-            margin-bottom: 0;
-        }
-        
-        .filter-card .card-body {
-            padding: 1rem;
-        }
-        
-        .filter-card .card-header {
-            padding: 0.75rem 1rem;
-            background-color: #f8f9fa;
-        }
-        
-        /* Полное отображение названий моделей */
-        .card-title {
-            white-space: normal !important;
-            overflow: visible !important;
-            text-overflow: clip !important;
-            display: block !important;
-            -webkit-line-clamp: unset !important;
-            line-clamp: unset !important; /* Добавлено стандартное свойство */
-            -webkit-box-orient: unset !important;
-            line-height: 1.3;
-            margin-bottom: 0.5rem;
-        }
-        
-        /* Убираем стандартные стили кнопок навигации */
-        .navbar-nav .btn {
-            border: none;
-            background: none;
-        }
-        
-        .navbar-nav .btn:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
 
         /* Скрываем секции по умолчанию */
         .hidden-section {
             display: none;
-        }
-        
-        /* Аккордеоны Bootstrap */
-        .accordion-button:not(.collapsed) {
-            background-color: #f8f9fa;
-            color: #000;
-        }
-        
-        .accordion-button:focus {
-            box-shadow: none;
-            border-color: rgba(0,0,0,.125);
-        }
-        
-        /* Улучшенный скроллбар */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 10px;
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: #c1c1c1;
-            border-radius: 10px;
-        }
-        
-        ::-webkit-scrollbar-thumb:hover {
-            background: #a8a8a8;
         }
     </style>
 </head>
@@ -200,118 +255,66 @@
 
     <!-- Основной каталог -->
     <div id="catalog-section" class="container py-4">
-        <!-- Поиск и фильтры -->
+        <!-- Поиск -->
         <div class="row mb-4">
-            <div class="col-md-8 mb-3">
+            <div class="col-12">
                 <div class="input-group">
                     <span class="input-group-text"><i class="bi bi-search"></i></span>
                     <input type="text" id="search-input" class="form-control" placeholder="Поиск по названию или артикулу..." oninput="filterProducts()">
                 </div>
             </div>
-            <div class="col-md-4">
-                <select id="sort-select" class="form-select" onchange="sortProducts()">
-                    <option value="name-asc">По названию (А-Я)</option>
-                    <option value="name-desc">По названию (Я-А)</option>
-                    <option value="price-asc">По цене (возрастание)</option>
-                    <option value="price-desc">По цене (убывание)</option>
-                    <option value="stock-desc">По наличию</option>
-                    <option value="power-asc">По мощности (возрастание)</option>
-                    <option value="power-desc">По мощности (убывание)</option>
-                </select>
+        </div>
+
+        <!-- Фильтр по категориям -->
+        <div class="category-filter">
+            <div class="category-btn active" data-category="all" onclick="selectCategory('all')">
+                <div class="category-icon">🏭</div>
+                <div class="category-name">Все товары</div>
+            </div>
+            <div class="category-btn" data-category="boiler" onclick="selectCategory('boiler')">
+                <div class="category-icon">🔥</div>
+                <div class="category-name">Котлы</div>
+            </div>
+            <div class="category-btn" data-category="water_heater" onclick="selectCategory('water_heater')">
+                <div class="category-icon">💧</div>
+                <div class="category-name">Бойлеры</div>
+            </div>
+            <div class="category-btn" data-category="chimney" onclick="selectCategory('chimney')">
+                <div class="category-icon">🚀</div>
+                <div class="category-name">Дымоходы</div>
+            </div>
+            <div class="category-btn" data-category="accessory" onclick="selectCategory('accessory')">
+                <div class="category-icon">🔧</div>
+                <div class="category-name">Комплектующие</div>
             </div>
         </div>
 
-        <!-- ФИЛЬТРЫ И СКИДКИ ДЛЯ ДЕСКТОПА (769px+) -->
-        <div class="desktop-filters row mb-4 filters-row">
-            <div class="col-md-6">
-                <div class="card filter-card">
-                    <div class="card-header">
-                        <h6 class="mb-0"><i class="bi bi-funnel me-2"></i>Фильтры</h6>
-                    </div>
-                    <div class="card-body">
-                        <div class="row g-2">
-                            <div class="col-6">
-                                <label class="form-label">Мощность</label>
-                                <select id="power-filter" class="form-select" onchange="filterProducts()">
-                                    <option value="">Все</option>
-                                    <option value="24">24 кВт</option>
-                                    <option value="28">28 кВт</option>
-                                    <option value="32">32 кВт</option>
-                                    <option value="35">35 кВт</option>
-                                </select>
-                            </div>
-                            <div class="col-6">
-                                <label class="form-label">Контуры</label>
-                                <select id="contour-filter" class="form-select" onchange="filterProducts()">
-                                    <option value="">Все</option>
-                                    <option value="Одноконтурный">Одноконтурный</option>
-                                    <option value="Двухконтурный">Двухконтурный</option>
-                                </select>
-                            </div>
-                            <div class="col-6">
-                                <label class="form-label">Wi-Fi</label>
-                                <select id="wifi-filter" class="form-select" onchange="filterProducts()">
-                                    <option value="">Все</option>
-                                    <option value="Да">С Wi-Fi</option>
-                                    <option value="Нет">Без Wi-Fi</option>
-                                </select>
-                            </div>
-                            <div class="col-6">
-                                <label class="form-label">Наличие</label>
-                                <select id="stock-filter" class="form-select" onchange="filterProducts()">
-                                    <option value="">Все</option>
-                                    <option value="available">В наличии</option>
-                                    <option value="outofstock">Под заказ</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
+        <!-- Блок скидок -->
+        <div class="discount-section">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Размер скидки: <span id="discount-value">0</span>%</label>
+                    <input type="range" id="discount-slider" class="form-range" min="0" max="50" value="0" oninput="updateDiscount(this.value)">
                 </div>
-            </div>
-
-            <div class="col-md-6">
-                <div class="card filter-card">
-                    <div class="card-header">
-                        <h6 class="mb-0"><i class="bi bi-percent me-2"></i>Скидка</h6>
-                    </div>
-                    <div class="card-body">
-                        <div class="mb-2">
-                            <label class="form-label">Размер скидки: <span id="discount-value">0</span>%</label>
-                            <input type="range" id="discount-slider" class="form-range" min="0" max="50" value="0" oninput="updateDiscount(this.value)">
-                        </div>
-                        <div class="mb-2">
-                            <input type="number" id="discount-input" class="form-control" min="0" max="50" value="0" oninput="updateDiscount(this.value)">
-                        </div>
-                        <div class="form-check form-switch mb-2">
-                            <input class="form-check-input" type="checkbox" id="auto-apply" checked>
-                            <label class="form-check-label" for="auto-apply">Применять автоматически</label>
-                        </div>
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" id="show-original" checked onchange="toggleOriginalPrices()">
-                            <label class="form-check-label" for="show-original">Показывать оригинальные цены</label>
-                        </div>
-                    </div>
+                <div class="col-md-6">
+                    <input type="number" id="discount-input" class="form-control" min="0" max="50" value="0" oninput="updateDiscount(this.value)" placeholder="Введите %">
                 </div>
             </div>
         </div>
 
-        <!-- ФИЛЬТРЫ И СКИДКИ ДЛЯ МОБИЛЬНЫХ (до 768px) -->
-        <div class="mobile-accordion mb-4" style="display: none;">
-            <!-- Фильтры - Аккордеон -->
-            <div class="accordion mb-3" id="mobileFilterAccordion">
-                <div class="accordion-item">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button collapsed" type="button" 
-                                data-bs-toggle="collapse" data-bs-target="#mobileFilterCollapse">
-                            <i class="bi bi-funnel me-2"></i> Фильтры
-                        </button>
-                    </h2>
-                    <div id="mobileFilterCollapse" class="accordion-collapse collapse">
-                        <div class="accordion-body">
+        <!-- Фильтры для выбранной категории -->
+        <div id="category-filters" class="row mb-4" style="display: none;">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="mb-0"><i class="bi bi-funnel me-2"></i>Фильтры для категории</h6>
+                    </div>
+                    <div class="card-body">
+                        <div id="boiler-filters" class="category-filter-content" style="display: none;">
                             <div class="row g-2">
-                                <div class="col-6">
+                                <div class="col-md-3">
                                     <label class="form-label">Мощность</label>
-                                    <select id="power-filter-mobile" class="form-select" onchange="syncFilter('power', this.value)">
+                                    <select id="power-filter" class="form-select" onchange="filterProducts()">
                                         <option value="">Все</option>
                                         <option value="24">24 кВт</option>
                                         <option value="28">28 кВт</option>
@@ -319,25 +322,97 @@
                                         <option value="35">35 кВт</option>
                                     </select>
                                 </div>
-                                <div class="col-6">
+                                <div class="col-md-3">
                                     <label class="form-label">Контуры</label>
-                                    <select id="contour-filter-mobile" class="form-select" onchange="syncFilter('contour', this.value)">
+                                    <select id="contour-filter" class="form-select" onchange="filterProducts()">
                                         <option value="">Все</option>
                                         <option value="Одноконтурный">Одноконтурный</option>
                                         <option value="Двухконтурный">Двухконтурный</option>
                                     </select>
                                 </div>
-                                <div class="col-6">
+                                <div class="col-md-3">
                                     <label class="form-label">Wi-Fi</label>
-                                    <select id="wifi-filter-mobile" class="form-select" onchange="syncFilter('wifi', this.value)">
+                                    <select id="wifi-filter" class="form-select" onchange="filterProducts()">
                                         <option value="">Все</option>
                                         <option value="Да">С Wi-Fi</option>
                                         <option value="Нет">Без Wi-Fi</option>
                                     </select>
                                 </div>
-                                <div class="col-6">
+                                <div class="col-md-3">
                                     <label class="form-label">Наличие</label>
-                                    <select id="stock-filter-mobile" class="form-select" onchange="syncFilter('stock', this.value)">
+                                    <select id="stock-filter" class="form-select" onchange="filterProducts()">
+                                        <option value="">Все</option>
+                                        <option value="available">В наличии</option>
+                                        <option value="outofstock">Под заказ</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="water_heater-filters" class="category-filter-content" style="display: none;">
+                            <div class="row g-2">
+                                <div class="col-md-4">
+                                    <label class="form-label">Объем</label>
+                                    <select id="volume-filter" class="form-select" onchange="filterProducts()">
+                                        <option value="">Все</option>
+                                        <option value="150">150 л</option>
+                                        <option value="200">200 л</option>
+                                        <option value="300">300 л</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Наличие</label>
+                                    <select id="stock-filter-water" class="form-select" onchange="filterProducts()">
+                                        <option value="">Все</option>
+                                        <option value="available">В наличии</option>
+                                        <option value="outofstock">Под заказ</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="chimney-filters" class="category-filter-content" style="display: none;">
+                            <div class="row g-2">
+                                <div class="col-md-4">
+                                    <label class="form-label">Диаметр</label>
+                                    <select id="diameter-filter" class="form-select" onchange="filterProducts()">
+                                        <option value="">Все</option>
+                                        <option value="60/100">DN60/100</option>
+                                        <option value="80/125">DN80/125</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Тип</label>
+                                    <select id="chimney-type-filter" class="form-select" onchange="filterProducts()">
+                                        <option value="">Все</option>
+                                        <option value="обычный">Обычный</option>
+                                        <option value="конденсационный">Конденсационный</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Наличие</label>
+                                    <select id="stock-filter-chimney" class="form-select" onchange="filterProducts()">
+                                        <option value="">Все</option>
+                                        <option value="available">В наличии</option>
+                                        <option value="outofstock">Под заказ</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="accessory-filters" class="category-filter-content" style="display: none;">
+                            <div class="row g-2">
+                                <div class="col-md-6">
+                                    <label class="form-label">Тип</label>
+                                    <select id="accessory-type-filter" class="form-select" onchange="filterProducts()">
+                                        <option value="">Все</option>
+                                        <option value="датчик">Датчики</option>
+                                        <option value="комплект">Комплекты</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Наличие</label>
+                                    <select id="stock-filter-accessory" class="form-select" onchange="filterProducts()">
                                         <option value="">Все</option>
                                         <option value="available">В наличии</option>
                                         <option value="outofstock">Под заказ</option>
@@ -348,45 +423,23 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Скидки - Аккордеон -->
-            <div class="accordion" id="mobileDiscountAccordion">
-                <div class="accordion-item">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button collapsed" type="button" 
-                                data-bs-toggle="collapse" data-bs-target="#mobileDiscountCollapse">
-                            <i class="bi bi-percent me-2"></i> Скидка
-                        </button>
-                    </h2>
-                    <div id="mobileDiscountCollapse" class="accordion-collapse collapse">
-                        <div class="accordion-body">
-                            <div class="mb-2">
-                                <label class="form-label">Размер скидки: <span id="discount-value-mobile">0</span>%</label>
-                                <input type="range" id="discount-slider-mobile" class="form-range" min="0" max="50" value="0" oninput="updateDiscountMobile(this.value)">
-                            </div>
-                            <div class="mb-2">
-                                <input type="number" id="discount-input-mobile" class="form-control" min="0" max="50" value="0" oninput="updateDiscountMobile(this.value)">
-                            </div>
-                            <div class="form-check form-switch mb-2">
-                                <input class="form-check-input" type="checkbox" id="auto-apply-mobile" checked onchange="document.getElementById('auto-apply').checked = this.checked;">
-                                <label class="form-check-label" for="auto-apply-mobile">Применять автоматически</label>
-                            </div>
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" id="show-original-mobile" checked onchange="document.getElementById('show-original').checked = this.checked; if (typeof toggleOriginalPrices === 'function') toggleOriginalPrices();">
-                                <label class="form-check-label" for="show-original-mobile">Показывать оригинальные цены</label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
 
-        <!-- Статистика -->
+        <!-- Сортировка -->
         <div class="row mb-3">
-            <div class="col-12">
+            <div class="col-md-8">
                 <div class="alert alert-info py-2">
                     <i class="bi bi-info-circle"></i> <span id="product-count">Загрузка товаров...</span>
                 </div>
+            </div>
+            <div class="col-md-4">
+                <select id="sort-select" class="form-select" onchange="sortProducts()">
+                    <option value="name-asc">По названию (А-Я)</option>
+                    <option value="name-desc">По названию (Я-А)</option>
+                    <option value="price-asc">По цене (возрастание)</option>
+                    <option value="price-desc">По цене (убывание)</option>
+                    <option value="stock-desc">По наличию</option>
+                </select>
             </div>
         </div>
 
@@ -399,6 +452,14 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Переключатель отображения цен -->
+    <div class="price-display-toggle">
+        <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="show-vat-prices" onchange="toggleVatPrices()">
+            <label class="form-check-label" for="show-vat-prices">Показать цены без НДС</label>
         </div>
     </div>
 
@@ -442,7 +503,7 @@
                             <i class="bi bi-file-text"></i> Запросить КП
                         </button>
                         <button class="btn btn-outline-danger btn-sm" onclick="clearCart()">
-                            <i class="bi bi-trash"></i> Очистить корзину
+                            <i class="bi bi-trash"></i> Очистить корзина
                         </button>
                     </div>
                 </div>
@@ -496,12 +557,15 @@
     <!-- Подключение JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- ОСНОВНЫЕ ФУНКЦИИ -->
+    <!-- Основные функции -->
     <script src="js/main.js"></script>
     <script src="js/cart.js"></script>
     <script src="js/comparison.js"></script>
 
-    <!-- МОДУЛИ (загружаются после основных) -->
+    <!-- Новый файл для работы с категориями -->
+    <script src="js/categories.js"></script>
+
+    <!-- МОДУЛИ -->
     <script src="modules/cart-storage.js"></script>
     <script src="modules/mini-cart.js"></script>
     <script src="modules/recommendations.js"></script>
@@ -518,6 +582,11 @@
             loadData();
         }
         
+        // Инициализируем систему категорий
+        if (typeof categorySystem !== 'undefined' && typeof categorySystem.init === 'function') {
+            categorySystem.init();
+        }
+        
         // Инициализируем аккордеоны Bootstrap
         const filterCollapse = new bootstrap.Collapse(document.getElementById('mobileFilterCollapse'), {
             toggle: false
@@ -526,30 +595,6 @@
         const discountCollapse = new bootstrap.Collapse(document.getElementById('mobileDiscountCollapse'), {
             toggle: false
         });
-        
-        // Синхронизация фильтров между мобильной и десктопной версиями
-        window.syncFilter = function(filterName, value) {
-            document.getElementById(filterName + '-filter').value = value;
-            if (typeof filterProducts === 'function') {
-                filterProducts();
-            }
-        }
-        
-        // Функция для обновления скидки на мобильной версии
-        window.updateDiscountMobile = function(value) {
-            value = Math.max(0, Math.min(50, parseInt(value) || 0));
-            document.getElementById('discount-slider-mobile').value = value;
-            document.getElementById('discount-input-mobile').value = value;
-            document.getElementById('discount-value-mobile').textContent = value;
-            
-            document.getElementById('discount-slider').value = value;
-            document.getElementById('discount-input').value = value;
-            document.getElementById('discount-value').textContent = value;
-            
-            if (typeof updateDiscount === 'function') {
-                updateDiscount(value);
-            }
-        }
         
         // Инициализация модулей после загрузки
         setTimeout(() => {
@@ -587,6 +632,19 @@
         }, 1000);
     });
 
+    // Функции для переключения категорий
+    function selectCategory(category) {
+        if (typeof categorySystem !== 'undefined' && typeof categorySystem.selectCategory === 'function') {
+            categorySystem.selectCategory(category);
+        }
+    }
+    
+    function toggleVatPrices() {
+        if (typeof categorySystem !== 'undefined' && typeof categorySystem.toggleVatPrices === 'function') {
+            categorySystem.toggleVatPrices();
+        }
+    }
+    
     // Показ/скрытие каталога и корзины
     function showCatalog() {
         document.getElementById('catalog-section').classList.remove('hidden-section');
@@ -658,6 +716,7 @@
             alert('Функция отправки запроса еще не загружена');
         }
     }
+    
     // Глобальные функции для акций
     function showAllPromotions() {
         if (typeof promotionsSystem !== 'undefined') {
@@ -671,9 +730,9 @@
         const promoCode = prompt('Введите промокод:');
         if (promoCode) {
             alert(`Промокод "${promoCode}" применен!`);
-            // Здесь будет логика применения промокода
         }
     }
+    
     // Функция показа всех акций
     function showAllPromotions() {
         if (typeof promotionsSystem !== 'undefined' && typeof promotionsSystem.showAllPromotions === 'function') {
@@ -684,8 +743,7 @@
             promotionsModal.show();
         }
     }
-    </script>
-    <script>
+    
     // Простая функция для проверки загрузки cart.js
     function checkCartLoaded() {
         if (typeof addToCart === 'undefined') {
@@ -713,27 +771,6 @@
             return true;
         };
     }
-    </script>
-    <script>
-    // Отладочный код
-    console.log('=== ДЕБАГГИНГ КОРЗИНЫ ===');
-    console.log('addToCart exists:', typeof addToCart);
-    console.log('updateCartItem exists:', typeof updateCartItem);
-    console.log('removeFromCart exists:', typeof removeFromCart);
-
-    // Проверка через 2 секунды после загрузки
-    setTimeout(() => {
-        console.log('=== ПРОВЕРКА ЧЕРЕЗ 2 СЕКУНДЫ ===');
-        console.log('addToCart:', typeof addToCart);
-        console.log('updateCartItem:', typeof updateCartItem);
-        console.log('removeFromCart:', typeof removeFromCart);
-        
-        if (typeof addToCart === 'function') {
-            console.log('✅ addToCart работает!');
-        } else {
-            console.error('❌ addToCart не работает!');
-        }
-    }, 2000);
     </script>
 </body>
 </html>
